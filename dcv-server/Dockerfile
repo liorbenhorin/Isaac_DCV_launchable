@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y \
     xfce4-terminal \
     thunar \
     metacity \
+    elementary-xfce-icon-theme \
+    adwaita-icon-theme-full \
     firefox \
     openssh-server \
     sudo \
