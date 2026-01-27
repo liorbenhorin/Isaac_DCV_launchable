@@ -21,6 +21,8 @@ RUN apt-get update && apt-get install -y \
     mesa-utils \
     x11-apps \
     dbus-x11 \
+    xvfb \
+    x11vnc \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

@@ -4,8 +4,8 @@ set -e
 echo "Starting DCV Server container..."
 
 # Set ubuntu user password
-echo "ubuntu:1234" | chpasswd
-echo "Ubuntu user password set to: 1234"
+echo "ubuntu:ubuntu123" | chpasswd
+echo "Ubuntu user password set"
 
 # Create PAM service for DCV
 if [ ! -f /etc/pam.d/dcv ]; then
@@ -47,13 +47,31 @@ mkdir -p $XDG_RUNTIME_DIR
 chown ubuntu:ubuntu $XDG_RUNTIME_DIR
 chmod 700 $XDG_RUNTIME_DIR
 
+# Start virtual X server (Xvfb)
+echo "Starting virtual X server..."
+Xvfb :0 -screen 0 1920x1080x24 &
+XVFB_PID=$!
+sleep 2
+
+# Verify X server is running
+if ! ps -p $XVFB_PID > /dev/null; then
+    echo "ERROR: Xvfb failed to start!"
+    exit 1
+fi
+echo "Xvfb started (PID: $XVFB_PID)"
+
+# Start a simple window manager for GNOME apps
+echo "Starting window manager..."
+DISPLAY=:0 metacity &
+sleep 1
+
 # Create DCV log directory
 mkdir -p /var/log/dcv
-chown ubuntu:ubuntu /var/log/dcv
+chown -R dcv:dcv /var/log/dcv 2>/dev/null || chown -R ubuntu:ubuntu /var/log/dcv
 
 # Start DCV server daemon
 echo "Starting DCV server..."
-dcvserver 2>&1 &
+DISPLAY=:0 dcvserver --create-session --session-type=virtual --owner ubuntu 2>&1 | tee /tmp/dcv-startup.log &
 DCV_PID=$!
 sleep 5
 
@@ -62,6 +80,7 @@ if ps -p $DCV_PID > /dev/null; then
     echo "DCV server is running (PID: $DCV_PID)"
 else
     echo "ERROR: DCV server failed to start!"
+    cat /tmp/dcv-startup.log
     cat /var/log/dcv/server.log 2>/dev/null || echo "No server log available"
     exit 1
 fi
@@ -95,7 +114,7 @@ echo "  DCV: https://<host>:8443"
 echo "  SSH: ssh ubuntu@<host>"
 echo "Credentials:"
 echo "  Username: ubuntu"
-echo "  Password: 1234"
+echo "  Password: ubuntu123"
 echo "=============================================="
 
 # Keep container running and show logs
