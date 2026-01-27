@@ -6,11 +6,22 @@ ENV container=docker
 # Prevent interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Set locale
+RUN apt-get update && apt-get install -y locales \
+    && locale-gen en_US.UTF-8 \
+    && update-locale LANG=en_US.UTF-8 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV LANG=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
+
 # Install base packages and XFCE desktop
 RUN apt-get update && apt-get install -y \
     xfce4 \
     xfce4-terminal \
     thunar \
+    nautilus \
     metacity \
     elementary-xfce-icon-theme \
     adwaita-icon-theme-full \
