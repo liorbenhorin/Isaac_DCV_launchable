@@ -96,6 +96,9 @@ RUN systemctl enable dcvserver.service \
     && systemctl enable dcv-setup.service \
     && systemctl set-default multi-user.target
 
+# Add hostname to /etc/hosts for DCV certificate generation
+RUN echo "127.0.0.1 dcv-server" >> /etc/hosts
+
 # Expose ports
 EXPOSE 22 8443
 
