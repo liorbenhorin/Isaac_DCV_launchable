@@ -58,17 +58,18 @@ for i in {1..30}; do
     sleep 1
 done
 
-# Start DCV server (must run as dcv user)
+# Start DCV server (must run as dcv user, using wrapper script)
 echo "Starting DCV server..."
-runuser -u dcv -- /usr/bin/dcvserver &
+runuser -u dcv -- /usr/bin/dcvserver -d &
 DCV_PID=$!
 sleep 5
 
-# Check if DCV server is running
-if ps -p $DCV_PID > /dev/null; then
-    echo "DCV server is running (PID: $DCV_PID)"
+# Check if DCV server process exists
+if pgrep -x dcvserver > /dev/null; then
+    echo "DCV server is running"
 else
     echo "ERROR: DCV server failed to start!"
+    cat /var/log/dcv/server.log 2>/dev/null || echo "No log file found"
     exit 1
 fi
 
