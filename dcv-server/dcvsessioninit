@@ -1,20 +1,20 @@
 #!/bin/bash
-# XFCE DCV session - manual component startup
+# XFCE DCV session with alternative window manager
 
 # Set background
 xsetroot -solid grey
 
-# Start XFCE window manager
-xfwm4 &
+# Use metacity as window manager (more stable in containers than xfwm4)
+metacity --replace &
 
 # Wait for WM
 sleep 1
 
-# Start XFCE panel
-xfce4-panel &
+# Start XFCE panel (with --disable-wm-check since we're using metacity)
+xfce4-panel --disable-wm-check &
 
-# Start desktop
-xfdesktop &
+# Start desktop (with --disable-wm-check)
+xfdesktop --disable-wm-check &
 
 # Start terminal
 xfce4-terminal --maximize &

@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     xfce4 \
     xfce4-terminal \
     thunar \
+    metacity \
     firefox \
     openssh-server \
     sudo \
