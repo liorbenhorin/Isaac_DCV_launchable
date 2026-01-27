@@ -4,6 +4,9 @@
 # Set background
 xsetroot -solid grey
 
+# Disable thumbnail generation for faster file browser
+export TUMBLER_DISABLE=1
+
 # Use metacity as window manager (more stable in containers than xfwm4)
 metacity --replace &
 
