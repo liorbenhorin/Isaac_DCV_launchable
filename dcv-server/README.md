@@ -57,7 +57,7 @@ Startup script that:
 
 - **Username**: ubuntu
 - **UID**: 1000
-- **Password**: 1234
+- **Password**: brevdemo123
 - **Shell**: /bin/bash
 - **Sudo**: Passwordless sudo enabled
 - **Groups**: sudo, video, render
@@ -68,6 +68,8 @@ Edit `entrypoint.sh`:
 ```bash
 echo "ubuntu:YOUR_NEW_PASSWORD" | chpasswd
 ```
+
+Current default password is `brevdemo123`.
 
 Or set via environment variable in docker-compose.yml:
 ```yaml

@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install -y \
     dbus-x11 \
     xvfb \
     x11vnc \
+    metacity \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

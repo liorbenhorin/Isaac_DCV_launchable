@@ -47,18 +47,18 @@ docker compose logs -f dcv-server
 **DCV Web Client:**
 - URL: `https://<instance-ip>:8443`
 - Username: `ubuntu`
-- Password: `1234`
+- Password: `brevdemo123`
 
 **DCV Native Client:**
 - Download from: https://download.nice-dcv.com/
 - Server: `<instance-ip>:8443`
 - Username: `ubuntu`
-- Password: `1234`
+- Password: `brevdemo123`
 
 **SSH Access:**
 ```bash
 ssh ubuntu@<instance-ip>
-# Password: 1234
+# Password: brevdemo123
 ```
 
 ## Configuration
@@ -66,7 +66,7 @@ ssh ubuntu@<instance-ip>
 ### Default Credentials
 
 - **Username**: `ubuntu`
-- **Password**: `1234`
+- **Password**: `brevdemo123`
 - **Sudo**: Passwordless sudo enabled
 
 ### Ports
@@ -244,7 +244,7 @@ echo "=========================================="
 echo "DCV Web: https://$(curl -s ifconfig.me):8443"
 echo "SSH: ssh ubuntu@$(curl -s ifconfig.me)"
 echo "Username: ubuntu"
-echo "Password: 1234"
+echo "Password: brevdemo123"
 echo "=========================================="
 ```
 
@@ -257,7 +257,7 @@ chmod +x brev-setup.sh
 
 ⚠️ **Important Security Notes:**
 
-1. **Default Password**: The default password `1234` is insecure. Change it for production use.
+1. **Default Password**: The default password `brevdemo123` is insecure. Change it for production use.
 2. **Self-Signed Certificate**: Nginx uses a self-signed SSL certificate. Your browser will show a warning.
 3. **Privileged Container**: The DCV container runs in privileged mode for display manager access.
 4. **Host Network**: Containers use host networking for simplicity. Consider bridge networking for isolation.

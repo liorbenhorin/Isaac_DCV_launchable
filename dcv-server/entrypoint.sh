@@ -4,7 +4,7 @@ set -e
 echo "Starting DCV Server container..."
 
 # Set ubuntu user password
-echo "ubuntu:ubuntu123" | chpasswd
+echo "ubuntu:brevdemo123" | chpasswd
 echo "Ubuntu user password set"
 
 # Create PAM service for DCV
@@ -46,6 +46,9 @@ export XDG_RUNTIME_DIR=/run/user/1000
 mkdir -p $XDG_RUNTIME_DIR
 chown ubuntu:ubuntu $XDG_RUNTIME_DIR
 chmod 700 $XDG_RUNTIME_DIR
+
+# Clean up any existing X server lock files
+rm -f /tmp/.X0-lock /tmp/.X11-unix/X0
 
 # Start virtual X server (Xvfb)
 echo "Starting virtual X server..."
@@ -114,7 +117,7 @@ echo "  DCV: https://<host>:8443"
 echo "  SSH: ssh ubuntu@<host>"
 echo "Credentials:"
 echo "  Username: ubuntu"
-echo "  Password: ubuntu123"
+echo "  Password: brevdemo123"
 echo "=============================================="
 
 # Keep container running and show logs
