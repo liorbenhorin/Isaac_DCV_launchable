@@ -6,12 +6,11 @@ ENV container=docker
 # Prevent interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install base packages and GNOME desktop
+# Install base packages and XFCE desktop
 RUN apt-get update && apt-get install -y \
-    ubuntu-desktop \
-    gnome-shell \
-    gnome-terminal \
-    nautilus \
+    xfce4 \
+    xfce4-terminal \
+    thunar \
     firefox \
     openssh-server \
     sudo \
@@ -60,26 +59,23 @@ RUN mkdir -p /run/sshd \
     && sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config \
     && sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
 
-# Configure GDM3 to use X11 and enable auto-login for ubuntu user
-RUN echo "[daemon]" > /etc/gdm3/custom.conf \
-    && echo "WaylandEnable=false" >> /etc/gdm3/custom.conf \
-    && echo "AutomaticLoginEnable=true" >> /etc/gdm3/custom.conf \
-    && echo "AutomaticLogin=ubuntu" >> /etc/gdm3/custom.conf
-
 # Create DCV configuration directory
 RUN mkdir -p /etc/dcv
 
 # Copy DCV configuration
 COPY dcv.conf /etc/dcv/dcv.conf
 
+# Copy custom session init script
+COPY dcvsessioninit /etc/dcv/dcvsessioninit
+RUN chmod +x /etc/dcv/dcvsessioninit
+
 # Copy setup script and systemd service
 COPY dcv-setup.sh /usr/local/bin/dcv-setup.sh
 COPY dcv-setup.service /etc/systemd/system/dcv-setup.service
 RUN chmod +x /usr/local/bin/dcv-setup.sh
 
-# Mask services that don't work in containers
-RUN systemctl mask systemd-logind.service \
-    && systemctl mask systemd-udevd.service \
+# Mask services that don't work in containers (keep systemd-logind for XFCE)
+RUN systemctl mask systemd-udevd.service \
     && systemctl mask systemd-oomd.service \
     && systemctl mask systemd-resolved.service \
     && systemctl mask networkd-dispatcher.service \

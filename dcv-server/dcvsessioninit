@@ -1,0 +1,23 @@
+#!/bin/bash
+# XFCE DCV session - manual component startup
+
+# Set background
+xsetroot -solid grey
+
+# Start XFCE window manager
+xfwm4 &
+
+# Wait for WM
+sleep 1
+
+# Start XFCE panel
+xfce4-panel &
+
+# Start desktop
+xfdesktop &
+
+# Start terminal
+xfce4-terminal --maximize &
+
+# Keep session alive
+wait
