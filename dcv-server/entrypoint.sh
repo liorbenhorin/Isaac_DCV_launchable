@@ -35,21 +35,22 @@ chmod 700 $XDG_RUNTIME_DIR
 mkdir -p /var/log/dcv
 chown -R dcv:dcv /var/log/dcv
 
-# Start GDM3 display manager (this creates the real GNOME session)
-echo "Starting GDM3 display manager..."
-/usr/sbin/gdm3 &
-GDM_PID=$!
-sleep 10
+# Start X server directly
+echo "Starting X server..."
+rm -f /tmp/.X0-lock /tmp/.X11-unix/X0
+Xorg :0 -seat seat0 -auth /run/user/1000/gdm/Xauthority -nolisten tcp vt1 -novtswitch &
+X_PID=$!
+sleep 5
 
-# Verify GDM3 is running
-if ! ps -p $GDM_PID > /dev/null; then
-    echo "ERROR: GDM3 failed to start!"
+# Verify X is running
+if ! ps -p $X_PID > /dev/null; then
+    echo "ERROR: X server failed to start!"
     exit 1
 fi
-echo "GDM3 started (PID: $GDM_PID)"
+echo "X server started (PID: $X_PID)"
 
 # Wait for X server to be ready
-echo "Waiting for X server..."
+echo "Waiting for X server to be ready..."
 for i in {1..30}; do
     if xdpyinfo -display :0 >/dev/null 2>&1; then
         echo "X server is ready"
@@ -57,6 +58,13 @@ for i in {1..30}; do
     fi
     sleep 1
 done
+
+# Start GNOME session as ubuntu user
+echo "Starting GNOME session..."
+runuser -u ubuntu -- env DISPLAY=:0 XDG_SESSION_TYPE=x11 XDG_RUNTIME_DIR=/run/user/1000 gnome-session &
+GNOME_PID=$!
+sleep 5
+echo "GNOME session started (PID: $GNOME_PID)"
 
 # Start DCV server (must run as dcv user, using wrapper script)
 echo "Starting DCV server..."
