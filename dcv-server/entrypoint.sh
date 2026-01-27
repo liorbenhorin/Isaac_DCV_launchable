@@ -68,16 +68,19 @@ echo "GNOME session started (PID: $GNOME_PID)"
 
 # Start DCV server (must run as dcv user, using wrapper script)
 echo "Starting DCV server..."
-runuser -u dcv -- /usr/bin/dcvserver -d &
+# Run in foreground initially to see errors
+su -s /bin/bash dcv -c "DISPLAY=:0 /usr/bin/dcvserver 2>&1 | tee /tmp/dcv-startup.log" &
 DCV_PID=$!
-sleep 5
+sleep 10
 
 # Check if DCV server process exists
 if pgrep -x dcvserver > /dev/null; then
-    echo "DCV server is running"
+    echo "DCV server is running (PID: $(pgrep dcvserver))"
 else
     echo "ERROR: DCV server failed to start!"
-    cat /var/log/dcv/server.log 2>/dev/null || echo "No log file found"
+    echo "Startup log:"
+    cat /tmp/dcv-startup.log 2>/dev/null || echo "No startup log found"
+    cat /var/log/dcv/server.log 2>/dev/null || echo "No server log found"
     exit 1
 fi
 

@@ -1,8 +1,5 @@
 FROM ubuntu:22.04
 
-# Prepare container to run systemd inside
-ENV container=docker
-
 # Prevent interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -49,42 +46,3 @@ RUN wget https://d1uj6qtbmh3dt5.cloudfront.net/2023.1/Servers/nice-dcv-2023.1-16
     && rm -rf nice-dcv-2023.1-16388-ubuntu2204-x86_64* \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-
-# Create ubuntu user with UID 1000
-RUN useradd -m -u 1000 -s /bin/bash ubuntu \
-    && echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
-    && usermod -aG video,render ubuntu
-
-# Configure SSH
-RUN mkdir -p /run/sshd \
-    && sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config \
-    && sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
-
-# Configure GDM3 to use X11 and enable auto-login for ubuntu user
-RUN echo "[daemon]" > /etc/gdm3/custom.conf \
-    && echo "WaylandEnable=false" >> /etc/gdm3/custom.conf \
-    && echo "AutomaticLoginEnable=true" >> /etc/gdm3/custom.conf \
-    && echo "AutomaticLogin=ubuntu" >> /etc/gdm3/custom.conf
-
-# Create DCV configuration directory
-RUN mkdir -p /etc/dcv
-
-# Copy DCV configuration
-COPY dcv.conf /etc/dcv/dcv.conf
-
-# Copy setup script and systemd service
-COPY dcv-setup.sh /usr/local/bin/dcv-setup.sh
-COPY dcv-setup.service /etc/systemd/system/dcv-setup.service
-RUN chmod +x /usr/local/bin/dcv-setup.sh
-
-# Enable services
-RUN systemctl enable dcvserver.service \
-    && systemctl enable gdm.service \
-    && systemctl enable ssh.service \
-    && systemctl enable dcv-setup.service
-
-# Expose ports
-EXPOSE 22 8443
-
-# Set systemd as entrypoint
-ENTRYPOINT ["/sbin/init"]
