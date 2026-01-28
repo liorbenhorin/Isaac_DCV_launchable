@@ -1,22 +1,32 @@
 #!/bin/bash
-# XFCE DCV session with alternative window manager
+# XFCE DCV session with modern theming
 
-# Set background
-xsetroot -solid grey
+# Set background to dark grey
+xsetroot -solid "#303030"
 
 # Disable thumbnail generation for faster file browser
 export TUMBLER_DISABLE=1
+
+# Apply theme via xsettingsd
+killall xsettingsd 2>/dev/null
+mkdir -p /home/ubuntu/.config/xsettingsd
+cat > /home/ubuntu/.config/xsettingsd/xsettingsd.conf <<EOF
+Net/ThemeName "Arc-Dark"
+Net/IconThemeName "Papirus-Dark"
+Gtk/FontName "Noto Sans 10"
+EOF
+xsettingsd -c /home/ubuntu/.config/xsettingsd/xsettingsd.conf &
 
 # Use openbox as window manager (works in containers)
 openbox &
 
 # Wait for WM
-sleep 1
+sleep 2
 
-# Start XFCE panel (with --disable-wm-check since we're using metacity)
+# Start XFCE panel
 xfce4-panel --disable-wm-check &
 
-# Start desktop (with --disable-wm-check)
+# Start desktop
 xfdesktop --disable-wm-check &
 
 # Keep session alive

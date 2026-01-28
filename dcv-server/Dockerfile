@@ -14,6 +14,11 @@ RUN apt-get update && apt-get install -y \
     openbox \
     elementary-xfce-icon-theme \
     adwaita-icon-theme-full \
+    arc-theme \
+    papirus-icon-theme \
+    fonts-noto \
+    fonts-noto-color-emoji \
+    xsettingsd \
     firefox \
     openssh-server \
     sudo \
@@ -56,6 +61,17 @@ RUN wget https://d1uj6qtbmh3dt5.cloudfront.net/2023.1/Servers/nice-dcv-2023.1-16
 RUN useradd -m -u 1000 -s /bin/bash ubuntu \
     && echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
     && usermod -aG video,render ubuntu
+
+# Configure user theme settings
+RUN mkdir -p /home/ubuntu/.config/gtk-3.0 \
+    && echo '[Settings]' > /home/ubuntu/.config/gtk-3.0/settings.ini \
+    && echo 'gtk-theme-name=Arc-Dark' >> /home/ubuntu/.config/gtk-3.0/settings.ini \
+    && echo 'gtk-icon-theme-name=Papirus-Dark' >> /home/ubuntu/.config/gtk-3.0/settings.ini \
+    && echo 'gtk-font-name=Noto Sans 10' >> /home/ubuntu/.config/gtk-3.0/settings.ini \
+    && echo 'gtk-theme-name="Arc-Dark"' > /home/ubuntu/.gtkrc-2.0 \
+    && echo 'gtk-icon-theme-name="Papirus-Dark"' >> /home/ubuntu/.gtkrc-2.0 \
+    && echo 'gtk-font-name="Noto Sans 10"' >> /home/ubuntu/.gtkrc-2.0 \
+    && chown -R ubuntu:ubuntu /home/ubuntu/.config /home/ubuntu/.gtkrc-2.0
 
 # Configure SSH
 RUN mkdir -p /run/sshd \
