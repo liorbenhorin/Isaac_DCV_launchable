@@ -105,6 +105,10 @@ COPY dcv-setup.sh /usr/local/bin/dcv-setup.sh
 COPY dcv-setup.service /etc/systemd/system/dcv-setup.service
 RUN chmod +x /usr/local/bin/dcv-setup.sh
 
+# Setup Isaac environment with Python 3.11 and uv
+COPY scripts/setup-isaac.sh /tmp/setup-isaac.sh
+RUN chmod +x /tmp/setup-isaac.sh && /tmp/setup-isaac.sh && rm /tmp/setup-isaac.sh
+
 # Configure systemd services
 RUN systemctl mask systemd-udevd.service \
     && systemctl mask systemd-oomd.service \
