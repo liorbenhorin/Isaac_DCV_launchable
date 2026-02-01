@@ -6,8 +6,3 @@ services:
     build:
       context: ./dcv-server
       dockerfile: Dockerfile
-
-  nginx:
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
